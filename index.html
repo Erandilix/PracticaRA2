@@ -4,10 +4,76 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mi primera página RA</title>
+  <title>Mi realidad aumentada</title>
+
+  <script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
+    }
+
+    #aviso {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      padding: 12px;
+      color: white;
+      background: #153451;
+      border-radius: 8px;
+      text-align: center;
+      z-index: 10;
+    }
+  </style>
 </head>
-<body style="font-family: Arial; text-align: center; padding: 40px;">
-  <h1>¡Mi primera página de realidad aumentada!</h1>
-  <p>Si puedes leer este mensaje, la página funciona correctamente.</p>
+
+<body>
+  <div id="aviso">Iniciando cámara...</div>
+
+  <a-scene
+    mindar-image="imageTargetSrc: ./targets%20(1).mind;"
+    color-space="sRGB"
+    renderer="colorManagement: true;"
+    vr-mode-ui="enabled: false"
+    device-orientation-permission-ui="enabled: false">
+
+    <a-camera position="0 0 0" look-controls="enabled: false"></a-camera>
+
+    <a-entity mindar-image-target="targetIndex: 0">
+      <a-box
+        color="#168BCD"
+        width="0.3"
+        height="0.3"
+        depth="0.3"
+        position="0 0 0.1">
+      </a-box>
+    </a-entity>
+  </a-scene>
+
+  <script>
+    const escena = document.querySelector("a-scene");
+    const aviso = document.querySelector("#aviso");
+    const marcador = document.querySelector("[mindar-image-target]");
+
+    escena.addEventListener("arReady", () => {
+      aviso.textContent = "Cámara lista. Enfoca tu marcador QR.";
+    });
+
+    escena.addEventListener("arError", () => {
+      aviso.textContent = "No se pudo iniciar la cámara.";
+    });
+
+    marcador.addEventListener("targetFound", () => {
+      aviso.textContent = "¡Marcador detectado!";
+    });
+
+    marcador.addEventListener("targetLost", () => {
+      aviso.textContent = "Marcador perdido. Vuelve a enfocarlo.";
+    });
+  </script>
 </body>
 </html>
